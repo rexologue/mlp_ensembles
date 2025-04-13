@@ -137,6 +137,12 @@ class Trainer:
         else:
             epoch = best_metric = 0
 
+        # Параметры Early Stopping
+        patience = 17            # Умеренный patience
+        warmup_epochs = 5        # Период игнорирования остановки
+        delta = 0.002            # Минимальный значимый прирост
+        stop_counter = 0
+
         while epoch != self.config.num_epochs:
             # Train model 
             self.train_epoch()
@@ -153,6 +159,16 @@ class Trainer:
 
             # Update best metric if needed
             best_metric = self.update_best_params(current_metric, best_metric, epoch)
+
+            if epoch > warmup_epochs:
+                if current_metric > best_metric + delta:
+                    stop_counter = 0
+                else:
+                    stop_counter += 1
+
+                if stop_counter >= patience:
+                    self.logger.add_tag('Early stopping')
+                    break
 
             epoch += 1
 

@@ -81,6 +81,10 @@ class NeptuneLogger(BaseLogger):
         
         self.run[f"{type_set}/{plot_name}"].append(plt_fig)
 
+    
+    def add_tag(self, tag: str):
+        self.run["sys/tags"].add([tag])
+
 
     def stop(self):
         self.run.stop()
