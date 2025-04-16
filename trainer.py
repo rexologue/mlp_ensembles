@@ -24,9 +24,9 @@ from utils.metrics import balanced_accuracy_score, confusion_matrix
 class Trainer:
     """A class for model training."""
 
-    def __init__(self, config, init_logger: bool = True, is_meta: bool = False, X_train=None, y_train=None, X_val=None, y_val=None):
+    def __init__(self, config, init_logger: bool = True, X_train=None, y_train=None, X_val=None, y_val=None):
         self.config = config
-        self.is_meta = is_meta
+        self.is_meta = (X_train is not None) and (y_train is not None) and (X_val is not None) and (y_val is not None)
         set_seed(self.config.seed)
 
         self._prepare_data(X_train, y_train, X_val, y_val)

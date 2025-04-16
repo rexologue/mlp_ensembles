@@ -28,6 +28,9 @@ model_cfg.params.init_type = WeightsInitType.he
 data_cfg = EasyDict()
 data_cfg.classes_num = 7
 
+data_cfg.train_transforms = {}
+data_cfg.validation_transforms = {}
+
 # Training configuration
 data_cfg.sampler_type = SamplerType.Upsampling
 
