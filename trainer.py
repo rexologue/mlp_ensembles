@@ -52,12 +52,11 @@ class Trainer:
         data_cfg = self.config.data_cfg
         batch_size = self.config.train.batch_size
 
-        train_transforms = Sequential(data_cfg.train_transforms)
-        validation_transforms = Sequential(data_cfg.eval_transforms)
-
         if not self.is_meta:
+            train_transforms = Sequential(data_cfg.train_transforms)
+            validation_transforms = Sequential(data_cfg.eval_transforms)
             self.train_dataset = EmotionsDataset(data_cfg, SetType.train, self.config.expert_class, transforms=train_transforms)
-            self.validation_dataloader = Dataloader(self.validation_dataset, batch_size=batch_size, shuffle=False)
+            self.validation_dataset = EmotionsDataset(data_cfg, SetType.validation, self.config.expert_class, transforms=validation_transforms)
 
         else:
             self.train_dataset = MetaDataset(X_train, y_train, data_cfg.num_classes)
