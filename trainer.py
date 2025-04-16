@@ -113,13 +113,15 @@ class Trainer:
         return loss, logits
 
 
-    def train_epoch(self):
+    def train_epoch(self, use_tqdm=True):
         """Trains the model on training data for one epoch.
 
         The method goes through all train_dataloader batches and calls the self.make_step() method at each step.
         """
         self.model.train()
-        pbar = tqdm(total=len(self.train_dataloader))
+
+        if use_tqdm:
+            pbar = tqdm(total=len(self.train_dataloader))
 
         for i, batch in enumerate(self.train_dataloader):
             # Making step
@@ -130,11 +132,12 @@ class Trainer:
             bal_acc = balanced_accuracy_score(batch['target'], preds)
 
             # Update pbar
-            pbar.set_description(f"Loss: {loss:.4f}, Bal acc {bal_acc:.4f}")
-            pbar.update(1)
+            if use_tqdm:
+                pbar.set_description(f"Loss: {loss:.4f}, Bal acc {bal_acc:.4f}")
+                pbar.update(1)
 
 
-    def fit(self):
+    def fit(self, use_tqdm=True):
         """The main model training loop."""
         if self.config.continue_from_checkpoint is not None:
             self.model, epoch, best_metric = self.checkpointer.load(self.model, self.config.continue_from_checkpoint)
@@ -150,7 +153,7 @@ class Trainer:
 
         while epoch != self.config.num_epochs:
             # Train model 
-            self.train_epoch()
+            self.train_epoch(use_tqdm)
 
             # Evaluate on train set
             self.evaluate(epoch, self.eval_train_dataloader, 'eval_train')
