@@ -4,6 +4,7 @@ import numpy as np
 from tqdm import tqdm
 
 from dataloaders.dataloader import Dataloader
+from datasets.meta_dataset import MetaDataset
 from datasets.emotions_dataset import EmotionsDataset
 
 from models.mlp import MLP
@@ -23,11 +24,12 @@ from utils.metrics import balanced_accuracy_score, confusion_matrix
 class Trainer:
     """A class for model training."""
 
-    def __init__(self, config, init_logger: bool = True):
+    def __init__(self, config, init_logger: bool = True, is_meta: bool = False, X_train=None, y_train=None, X_val=None, y_val=None):
         self.config = config
+        self.is_meta = is_meta
         set_seed(self.config.seed)
 
-        self._prepare_data()
+        self._prepare_data(X_train, y_train, X_val, y_val)
         self._prepare_model()
 
         self._init_logger(init_logger)
@@ -45,7 +47,7 @@ class Trainer:
             self.logger = None
 
 
-    def _prepare_data(self):
+    def _prepare_data(self, X_train=None, y_train=None, X_val=None, y_val=None):
         """Prepares training and validation data."""
         data_cfg = self.config.data_cfg
         batch_size = self.config.train.batch_size
@@ -53,12 +55,16 @@ class Trainer:
         train_transforms = Sequential(data_cfg.train_transforms)
         validation_transforms = Sequential(data_cfg.eval_transforms)
 
-        self.train_dataset = EmotionsDataset(data_cfg, SetType.train, self.config.expert_class, transforms=train_transforms)
-        self.train_dataloader = Dataloader(self.train_dataset, batch_size, shuffle=True, sampler=data_cfg.sampler_type)
+        if not self.is_meta:
+            self.train_dataset = EmotionsDataset(data_cfg, SetType.train, self.config.expert_class, transforms=train_transforms)
+            self.validation_dataloader = Dataloader(self.validation_dataset, batch_size=batch_size, shuffle=False)
 
+        else:
+            self.train_dataset = MetaDataset(X_train, y_train, data_cfg.num_classes)
+            self.validation_dataset = MetaDataset(X_val, y_val, data_cfg.num_classes)
+
+        self.train_dataloader      = Dataloader(self.train_dataset, batch_size, shuffle=True, sampler=data_cfg.sampler_type)
         self.eval_train_dataloader = Dataloader(self.train_dataset, batch_size, shuffle=False)
-
-        self.validation_dataset = EmotionsDataset(data_cfg, SetType.validation, self.config.expert_class, transforms=validation_transforms)
         self.validation_dataloader = Dataloader(self.validation_dataset, batch_size=batch_size, shuffle=False)
 
 

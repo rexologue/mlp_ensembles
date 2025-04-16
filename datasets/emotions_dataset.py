@@ -1,5 +1,4 @@
 import os
-
 import cv2
 
 from transforms.target_transforms import OneHotEncoding
