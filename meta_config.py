@@ -26,6 +26,18 @@ model_cfg.params.init_type = WeightsInitType.he
 ######################
 
 data_cfg = EasyDict()
+
+# Label mapping
+data_cfg.label_mapping = {
+    'angry': 0,
+    'disgusted': 1,
+    'fearful': 2,
+    'happy': 3,
+    'neutral': 4,
+    'sad': 5,
+    'surprised': 6
+}
+
 data_cfg.classes_num = 7
 
 data_cfg.train_transforms = {}
