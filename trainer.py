@@ -59,8 +59,8 @@ class Trainer:
             self.validation_dataset = EmotionsDataset(data_cfg, SetType.validation, self.config.expert_class, transforms=validation_transforms)
 
         else:
-            self.train_dataset = MetaDataset(X_train, y_train, data_cfg.num_classes)
-            self.validation_dataset = MetaDataset(X_val, y_val, data_cfg.num_classes)
+            self.train_dataset = MetaDataset(X_train, y_train, data_cfg.classes_num)
+            self.validation_dataset = MetaDataset(X_val, y_val, data_cfg.classes_num)
 
         self.train_dataloader      = Dataloader(self.train_dataset, batch_size, shuffle=True, sampler=data_cfg.sampler_type)
         self.eval_train_dataloader = Dataloader(self.train_dataset, batch_size, shuffle=False)
