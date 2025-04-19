@@ -9,11 +9,12 @@ class MetaDataset:
 
     def __init__(self, X, y, classes_num: int):
         self._data = X
-        self._targets = y.tolist()
 
+        self._targets = None
         self._ohe_targets = None
 
         if y is not None:
+            self._targets = y.tolist()
             self._ohe_targets = OneHotEncoding(classes_num)(self._targets)
 
     @property
@@ -21,7 +22,7 @@ class MetaDataset:
         return self._targets
 
     def __len__(self):
-        return len(self._targets)
+        return len(self._data)
 
     def __getitem__(self, idx: int) -> dict:
         """Loads and returns one sample from a dataset with the given idx index.
@@ -34,9 +35,11 @@ class MetaDataset:
                     'ohe_target': ohe target (numpy.ndarray),
                 }
         """
+        target = None
         ohe_target = None
 
         if self._ohe_targets is not None:
+            target = self._targets[idx]
             ohe_target = self._ohe_targets[idx]
 
-        return {'image': self._data[idx], 'target': self._targets[idx], 'ohe_target': ohe_target}
+        return {'image': self._data[idx], 'target': target, 'ohe_target': ohe_target}
