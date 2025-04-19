@@ -9,11 +9,11 @@ model_cfg = EasyDict()
 
 # Layers configuration
 model_cfg.layers = [
-    {'type': LayerType.Linear, 'params': {'in_features': 140, 'out_features': 64}},
+    {'type': LayerType.Linear, 'params': {'in_features': 140, 'out_features': 16}},
     {'type': LayerType.LeakyReLU, 'params': {'alpha': 0.2}},
-    {'type': LayerType.Dropout, 'params': {'p': 0.35}},
+    {'type': LayerType.Dropout, 'params': {'p': 0.15}},
 
-    {'type': LayerType.Linear, 'params': {'in_features': 64, 'out_features': 7}},
+    {'type': LayerType.Linear, 'params': {'in_features': 16, 'out_features': 7}},
 ]
 
 # Weights and bias initialization
@@ -59,8 +59,8 @@ exp_cfg.num_epochs = 120
 # Train parameters
 exp_cfg.train = EasyDict()
 exp_cfg.train.batch_size = 64
-exp_cfg.train.weight_decay = 0.01
-exp_cfg.train.learning_rate = 0.01
+exp_cfg.train.weight_decay = 0.07
+exp_cfg.train.learning_rate = 0.002
 
 
 # Overfit parameters
